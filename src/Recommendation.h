@@ -2,6 +2,7 @@
 
 #include <map>
 #include <fstream>
+#include <vector>
 #include <string>
 #include "MotionPicture.h"
 
@@ -15,13 +16,22 @@ class Recommendation {
         * @param file the dataset
         */
         Recommendation(string file);
-        void reverse(string& str);
     private:
-        map<MotionPicture, map<MotionPicture, double> > database;
+        map<MotionPicture, int> mp_to_idx;
+        map<int, MotionPicture> idx_to_mp;
+        vector<vector<int>> adjacency_matrix;
         /**
         * Parses the dataset 
         *
         * @return a vector or each individual element for the MotionPicture object
         */
+        void reverse(string& str);
         std::vector<std::string> Split(const std::string& str, char delimiter1);
+        std::vector<std::string> parseGenres(const std::string& str);
+        int parseDuration(const std::string& str);
+        std::vector<std::string> parseYears(const std::string& s);
+        std::vector<std::string> parseCast(const std::string& s);
+        int parseVotes(const std::string& str);
+        MotionPicture operator[](int i);
+        int operator[](MotionPicture mp);
 };
