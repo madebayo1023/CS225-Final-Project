@@ -15,6 +15,7 @@ class Recommendation {
         * @param file the dataset
         */
         Recommendation(string file);
+        void reverse(string& str);
     private:
         map<MotionPicture, map<MotionPicture, double> > database;
         /**

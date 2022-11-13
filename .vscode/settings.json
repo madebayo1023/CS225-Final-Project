@@ -80,6 +80,8 @@
         "numbers": "cpp",
         "semaphore": "cpp",
         "stop_token": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "__tree": "cpp",
+        "stack": "cpp"
     }
 }
