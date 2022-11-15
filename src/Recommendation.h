@@ -20,6 +20,7 @@ class Recommendation {
         map<MotionPicture, int> mp_to_idx;
         map<int, MotionPicture> idx_to_mp;
         vector<vector<int>> adjacency_matrix;
+        // have a vector of movie objects?
         /**
         * Parses the dataset 
         *
@@ -28,10 +29,8 @@ class Recommendation {
         void reverse(string& str);
         std::vector<std::string> Split(const std::string& str, char delimiter1);
         std::vector<std::string> parseGenres(const std::string& str);
-        int parseDuration(const std::string& str);
         std::vector<std::string> parseYears(const std::string& s);
         std::vector<std::string> parseCast(const std::string& s);
-        int parseVotes(const std::string& str);
         MotionPicture operator[](int i);
         int operator[](MotionPicture mp);
 };
