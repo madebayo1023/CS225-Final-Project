@@ -6,8 +6,8 @@ Recommendation::Recommendation(string file) {
   ifstream dataset;
   string line;
   dataset.open(file);
-  int count = 0;
   // title,year,certificate,duration,genre,rating,description,stars,votes
+  std::vector<MotionPicture> movielist;
   getline(dataset, line);
   while (dataset.good()) {
     getline(dataset, line);
@@ -20,14 +20,24 @@ Recommendation::Recommendation(string file) {
     
     if (!is_movie) {
       MotionPicture mp(mp_string.at(0), is_movie, stoi(mp_years[0]), stoi(mp_years[1]), mp_string.at(2), stoi(mp_string[3]), mp_genre, stod(mp_string.at(5)), mp_string.at(6), mp_genre, stoi(mp_string[8]));
-      // mp_to_idx[mp] = count;
-      // idx_to_mp[count] = mp;
+      movielist.push_back(mp);
     } else {
       MotionPicture mp(mp_string.at(0), is_movie, stoi(mp_years[0]), -1, mp_string.at(2), stoi(mp_string[3]), mp_genre, stod(mp_string.at(5)), mp_string.at(6), mp_genre, stoi(mp_string[8]));
-      // mp_to_idx[mp] = count;
-      // idx_to_mp.insert({count, mp});
+      movielist.push_back(mp);
     }
-    count++;
+  }
+  for (unsigned i = 0; i < movielist.size(); i++) {
+    movie_idx.insert({movielist[i], i});
+    idx_movie.insert({i, movielist[i]});
+  }
+  for (unsigned j = 0; j < movielist.size(); j++) {
+    std::vector<double> vec;
+    for (unsigned k = 0; k < movielist.size(); k++) {
+      // Currently the source of runtime problems //
+      double similarity_score = actorScore(movielist[j], movielist[k]) + genreScore(movielist[j], movielist[k]) + durationScore(movielist[j], movielist[k]) + yearScore(movielist[j], movielist[k]);
+      vec.push_back(similarity_score);
+    }
+    adjacency_matrix.push_back(vec);
   }
 }
 
@@ -139,10 +149,62 @@ std::vector<std::string> Recommendation::parseYears(const std::string& s) {
   return substrs;
 }
 
-// MotionPicture Recommendation::operator[](int i) {
-//   return idx_to_mp[i];
-// }
+double Recommendation::actorScore(MotionPicture movie_one, MotionPicture movie_two) {
+  std::vector<string> cast_one = movie_one.getCast();
+  std::vector<string> cast_two = movie_two.getCast();
+  int score = 0;
+  for (auto i : cast_one) {
+    for (auto j : cast_two) {
+      if (i == j) {
+        score++;
+      }
+    }
+  }
+  return score;
+}
 
-// int Recommendation::operator[](MotionPicture mp) {
-//   return mp_to_idx[mp];
-// }
+double Recommendation::yearScore(MotionPicture movie_one, MotionPicture movie_two) {
+  if (movie_one.getStartYear() == movie_two.getStartYear()) {
+    return 1;
+  }
+  return 0;
+}
+
+double Recommendation::genreScore(MotionPicture movie_one, MotionPicture movie_two) {
+  std::vector<string> genre_one = movie_one.getGenre();
+  std::vector<string> genre_two = movie_two.getGenre();
+  int score = 0;
+  for (auto i : genre_one) {
+    for (auto j : genre_two) {
+      if (i == j) {
+        score++;
+      }
+    }
+  }
+  return score;
+}
+
+double Recommendation::durationScore(MotionPicture movie_one, MotionPicture movie_two) {
+  if (movie_one.getDuration() == movie_two.getDuration()) {
+    return 2;
+  }
+  if (movie_one.getDuration() - movie_two.getDuration() > 0 && movie_one.getDuration() - movie_two.getDuration() < movie_one.getDuration() / 4) {
+    return 1.5;
+  }
+  if (movie_two.getDuration() - movie_one.getDuration() > 0 && movie_two.getDuration() - movie_one.getDuration() < movie_two.getDuration() / 4) {
+    return 1.5;
+  }
+  if (movie_one.getDuration() - movie_two.getDuration() > 0 && movie_one.getDuration() - movie_two.getDuration() < movie_one.getDuration() / 2) {
+    return 1;
+  }
+  if (movie_two.getDuration() - movie_one.getDuration() > 0 && movie_two.getDuration() - movie_one.getDuration() < movie_two.getDuration() / 2) {
+    return 1;
+  }
+  if (movie_one.getDuration() - movie_two.getDuration() > 0 && movie_one.getDuration() - movie_two.getDuration() < 1 - movie_one.getDuration() / 3) {
+    return 0.5;
+  }
+  if (movie_two.getDuration() - movie_one.getDuration() > 0 && movie_two.getDuration() - movie_one.getDuration() < movie_two.getDuration() / 3) {
+    return 0.5;
+  }
+  return 0;
+}

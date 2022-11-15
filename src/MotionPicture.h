@@ -35,7 +35,7 @@ class MotionPicture {
         *
         * @return whether The MotionPicture object is a movie
         */
-        bool& getIsMovie();
+        bool getIsMovie() const;
         /**
         * Returns the motion picture start year 
         *
@@ -90,6 +90,9 @@ class MotionPicture {
         * @return votes of The MotionPicture object
         */
         int& getVotes();
+
+        //overload for map construction
+        bool operator<(const MotionPicture & movie) const;
     private:
         std::string title;
         bool is_movie;

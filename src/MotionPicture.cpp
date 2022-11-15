@@ -16,7 +16,7 @@ MotionPicture::MotionPicture(string title, bool is_movie, int start_year, int en
                     this->votes = votes;
                  }
 std::string& MotionPicture::getTitle() { return title; }
-bool& MotionPicture::getIsMovie() { return is_movie; }
+bool MotionPicture::getIsMovie() const { return is_movie; }
 int& MotionPicture::getStartYear() { return start_year; }
 int& MotionPicture::getEndYear() { return end_year; }
 string& MotionPicture::getCertificate() {return certificate; }
@@ -26,3 +26,8 @@ double& MotionPicture::getRating() { return rating; }
 string& MotionPicture::getDescription() { return description; }
 vector<string>& MotionPicture::getCast() { return cast; }
 int& MotionPicture::getVotes() { return votes; }
+
+bool MotionPicture::operator<(const MotionPicture & movie) const {
+    //this is just arbitrary to get the map to work
+  return movie.getIsMovie();
+}
