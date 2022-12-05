@@ -16,11 +16,12 @@ class Recommendation {
         * @param file the dataset
         */
         Recommendation(string file);
+        ~Recommendation();
     private:
-        //vector<pair<MotionPicture, map<MotionPicture, double>>> storage;
-        map<int, MotionPicture> idx_movie;
-        map<MotionPicture, int> movie_idx;
+        map<MotionPicture*, int> mp_to_idx;
+        map<int, MotionPicture*> idx_to_mp;
         vector<vector<double>> adjacency_matrix;
+        int size_;
         // have a vector of movie objects?
         /**
         * Parses the dataset 
@@ -32,9 +33,8 @@ class Recommendation {
         std::vector<std::string> parseGenres(const std::string& str);
         std::vector<std::string> parseYears(const std::string& s);
         std::vector<std::string> parseCast(const std::string& s);
-
-        double actorScore(MotionPicture movie_one, MotionPicture movie_two);
-        double yearScore(MotionPicture movie_one, MotionPicture movie_two);
-        double genreScore(MotionPicture movie_one, MotionPicture movie_two);
-        double durationScore(MotionPicture movie_one, MotionPicture movie_two);
+        MotionPicture* operator[](int i);
+        int& operator[](MotionPicture mp);
+        void clear();
+        void setSimilarity();
 };

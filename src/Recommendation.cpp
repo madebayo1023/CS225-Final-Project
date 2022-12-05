@@ -1,13 +1,15 @@
 #include "Recommendation.h"
 #include <iostream>
+#include <fstream>
+#include <utility>
 
 using namespace std;
 Recommendation::Recommendation(string file) {
   ifstream dataset;
   string line;
   dataset.open(file);
+  int count = 0;
   // title,year,certificate,duration,genre,rating,description,stars,votes
-  std::vector<MotionPicture> movielist;
   getline(dataset, line);
   while (dataset.good()) {
     getline(dataset, line);
@@ -19,26 +21,31 @@ Recommendation::Recommendation(string file) {
     std::vector<std::string> mp_cast = parseCast(mp_string.at(7));
     
     if (!is_movie) {
-      MotionPicture mp(mp_string.at(0), is_movie, stoi(mp_years[0]), stoi(mp_years[1]), mp_string.at(2), stoi(mp_string[3]), mp_genre, stod(mp_string.at(5)), mp_string.at(6), mp_genre, stoi(mp_string[8]));
-      movielist.push_back(mp);
+      MotionPicture* mp = new MotionPicture(mp_string.at(0), is_movie, stoi(mp_years[0]), stoi(mp_years[1]), mp_string.at(2), stoi(mp_string[3]), mp_genre, stod(mp_string.at(5)), mp_string.at(6), mp_genre, stoi(mp_string[8]));
+      mp_to_idx[mp] = count;
+      idx_to_mp[count] = mp;
     } else {
-      MotionPicture mp(mp_string.at(0), is_movie, stoi(mp_years[0]), -1, mp_string.at(2), stoi(mp_string[3]), mp_genre, stod(mp_string.at(5)), mp_string.at(6), mp_genre, stoi(mp_string[8]));
-      movielist.push_back(mp);
+      MotionPicture* mp = new MotionPicture(mp_string.at(0), is_movie, stoi(mp_years[0]), -1, mp_string.at(2), stoi(mp_string[3]), mp_genre, stod(mp_string.at(5)), mp_string.at(6), mp_genre, stoi(mp_string[8]));
+      mp_to_idx[mp] = count;
+      idx_to_mp[count] = mp;
     }
+    count++;
   }
-  for (unsigned i = 0; i < movielist.size(); i++) {
-    movie_idx.insert({movielist[i], i});
-    idx_movie.insert({i, movielist[i]});
+  size_ = count;
+  for (int i = 0; i < size_; i++) {
+    vector<double> inner(size_, 0);
+    adjacency_matrix.push_back(inner);
   }
-  for (unsigned j = 0; j < movielist.size(); j++) {
-    std::vector<double> vec;
-    for (unsigned k = 0; k < movielist.size(); k++) {
-      // Currently the source of runtime problems //
-      double similarity_score = actorScore(movielist[j], movielist[k]) + genreScore(movielist[j], movielist[k]) + durationScore(movielist[j], movielist[k]) + yearScore(movielist[j], movielist[k]);
-      vec.push_back(similarity_score);
-    }
-    adjacency_matrix.push_back(vec);
-  }
+  // std::cout << mp_to_idx.size() << " " << idx_to_mp.size() << std::endl;
+  setSimilarity();
+
+  // ofstream MyFile("data/adj.txt");
+  // for (int i = 0; i < size_; i++) {
+  //   for (int j = 0; j < size_; j++) {
+  //     MyFile << adjacency_matrix[i][j] << " ";
+  //   }
+  //   MyFile << "\n";
+  // }
 }
 
 std::vector<std::string> Recommendation::Split(const std::string& str, char delimiter) {
@@ -149,62 +156,112 @@ std::vector<std::string> Recommendation::parseYears(const std::string& s) {
   return substrs;
 }
 
-double Recommendation::actorScore(MotionPicture movie_one, MotionPicture movie_two) {
-  std::vector<string> cast_one = movie_one.getCast();
-  std::vector<string> cast_two = movie_two.getCast();
-  int score = 0;
-  for (auto i : cast_one) {
-    for (auto j : cast_two) {
+MotionPicture* Recommendation::operator[](int i) {
+  return idx_to_mp[i];
+}
+
+int& Recommendation::operator[](MotionPicture mp) {
+  return mp_to_idx[&mp];
+}
+
+void Recommendation::setSimilarity() {
+  for (int i = 0; i < size_; i++) {
+    for (int j = 0; j < size_; j++) {
       if (i == j) {
-        score++;
+        adjacency_matrix[i][j] = -1;
+        break;
+      }
+      if (i >= j) {
+        int sim = 0;
+        if (idx_to_mp[i]->getCertificate() == idx_to_mp[j]->getCertificate()) {
+          adjacency_matrix[i][j] += 10;
+          adjacency_matrix[j][i] += 10;
+          sim++;
+        }
+        if (abs(idx_to_mp[i]->getStartYear() - idx_to_mp[j]->getStartYear()) <= 5) {
+          adjacency_matrix[i][j] += 5;
+          adjacency_matrix[j][i] += 5;
+          sim++;
+        }
+        if (abs(idx_to_mp[i]->getEndYear() - idx_to_mp[j]->getEndYear()) <= 3) {
+          adjacency_matrix[i][j] += 3;
+          adjacency_matrix[j][i] += 3;
+          sim++;
+        }
+        if (idx_to_mp[i]->getIsMovie() == idx_to_mp[j]->getIsMovie()) {
+          adjacency_matrix[i][j] += 8;
+          adjacency_matrix[j][i] += 8;
+          sim++;
+        }
+        if (abs(idx_to_mp[i]->getVotes() - idx_to_mp[j]->getVotes()) <= 1000) {
+          adjacency_matrix[i][j] += 13;
+          adjacency_matrix[j][i] += 13;
+          sim++;
+        } else if (abs(idx_to_mp[i]->getVotes() - idx_to_mp[j]->getVotes()) <= 25000) {
+          adjacency_matrix[i][j] += 9;
+          adjacency_matrix[j][i] += 9;
+          sim++;
+        }
+        else if (abs(idx_to_mp[i]->getVotes() - idx_to_mp[j]->getVotes()) <= 50000) {
+          adjacency_matrix[i][j] += 3;
+          adjacency_matrix[j][i] += 3;
+          sim++;
+        }
+        if (sim >= 5 && abs(idx_to_mp[i]->getRating() - idx_to_mp[j]->getRating()) <= 1) {
+          adjacency_matrix[i][j] += 17;
+          adjacency_matrix[j][i] += 17;
+          sim++;
+        } else if (sim >= 5 && abs(idx_to_mp[i]->getRating() - idx_to_mp[j]->getRating()) <= 1.25) {
+          adjacency_matrix[i][j] += 12;
+          adjacency_matrix[j][i] += 12;
+          sim++;
+        } else if (sim >= 5 && abs(idx_to_mp[i]->getRating() - idx_to_mp[j]->getRating()) <= 2) {
+          adjacency_matrix[i][j] += 5;
+          adjacency_matrix[j][i] += 5;
+          sim++;
+        }
+        if (sim >= 5 && abs(idx_to_mp[i]->getDuration() - idx_to_mp[j]->getDuration()) <= 25) {
+          adjacency_matrix[i][j] += 6;
+          adjacency_matrix[j][i] += 6;
+          sim++;
+        }
+        if (sim >= 7) {
+          auto& genre1 = idx_to_mp[i]->getGenre();
+          auto& genre2 = idx_to_mp[j]->getGenre();
+          for (size_t k = 0; k < genre1.size(); k++) {
+            for (size_t l = 0; l < genre2.size(); l++) {
+              if (k >= l && genre1[k] == genre2[l]) {
+                adjacency_matrix[i][j] += 25;
+                adjacency_matrix[j][i] += 25;
+              }
+            }
+          }
+          auto& actors1 = idx_to_mp[i]->getCast();
+          auto& actors2 = idx_to_mp[j]->getCast();
+          bool similarC = false;
+          for (size_t k = 0; k < actors1.size(); k++) {
+            for (size_t l = 0; l < actors2.size(); l++) {
+              if (actors1[k] == actors2[l]) {
+                adjacency_matrix[i][j] += 30;
+                adjacency_matrix[j][i] += 30;
+                similarC = true;
+                break;
+              }
+            }
+            if (similarC) break;
+          }
+        }
       }
     }
   }
-  return score;
 }
 
-double Recommendation::yearScore(MotionPicture movie_one, MotionPicture movie_two) {
-  if (movie_one.getStartYear() == movie_two.getStartYear()) {
-    return 1;
+void Recommendation::clear() {
+  for (auto& p1 : idx_to_mp) {
+    delete p1.second;
   }
-  return 0;
 }
 
-double Recommendation::genreScore(MotionPicture movie_one, MotionPicture movie_two) {
-  std::vector<string> genre_one = movie_one.getGenre();
-  std::vector<string> genre_two = movie_two.getGenre();
-  int score = 0;
-  for (auto i : genre_one) {
-    for (auto j : genre_two) {
-      if (i == j) {
-        score++;
-      }
-    }
-  }
-  return score;
-}
-
-double Recommendation::durationScore(MotionPicture movie_one, MotionPicture movie_two) {
-  if (movie_one.getDuration() == movie_two.getDuration()) {
-    return 2;
-  }
-  if (movie_one.getDuration() - movie_two.getDuration() > 0 && movie_one.getDuration() - movie_two.getDuration() < movie_one.getDuration() / 4) {
-    return 1.5;
-  }
-  if (movie_two.getDuration() - movie_one.getDuration() > 0 && movie_two.getDuration() - movie_one.getDuration() < movie_two.getDuration() / 4) {
-    return 1.5;
-  }
-  if (movie_one.getDuration() - movie_two.getDuration() > 0 && movie_one.getDuration() - movie_two.getDuration() < movie_one.getDuration() / 2) {
-    return 1;
-  }
-  if (movie_two.getDuration() - movie_one.getDuration() > 0 && movie_two.getDuration() - movie_one.getDuration() < movie_two.getDuration() / 2) {
-    return 1;
-  }
-  if (movie_one.getDuration() - movie_two.getDuration() > 0 && movie_one.getDuration() - movie_two.getDuration() < 1 - movie_one.getDuration() / 3) {
-    return 0.5;
-  }
-  if (movie_two.getDuration() - movie_one.getDuration() > 0 && movie_two.getDuration() - movie_one.getDuration() < movie_two.getDuration() / 3) {
-    return 0.5;
-  }
-  return 0;
+Recommendation::~Recommendation() {
+  clear();
 }

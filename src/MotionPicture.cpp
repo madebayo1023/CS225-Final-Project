@@ -1,5 +1,8 @@
 #include "MotionPicture.h"
 
+MotionPicture::MotionPicture() {}
+
+MotionPicture::MotionPicture(string title) { this->title = title; }
 
 MotionPicture::MotionPicture(string title, bool is_movie, int start_year, int end_year, string certificate, int duration, vector<string> genre,
                         double rating, string description, vector<string> cast, int votes) {
@@ -15,8 +18,11 @@ MotionPicture::MotionPicture(string title, bool is_movie, int start_year, int en
                     this->cast = cast;
                     this->votes = votes;
                  }
+bool MotionPicture::operator<(const MotionPicture& rhs) const {
+    return true; // we are not concerned with maintaining an ordered map
+}
 std::string& MotionPicture::getTitle() { return title; }
-bool MotionPicture::getIsMovie() const { return is_movie; }
+bool& MotionPicture::getIsMovie() { return is_movie; }
 int& MotionPicture::getStartYear() { return start_year; }
 int& MotionPicture::getEndYear() { return end_year; }
 string& MotionPicture::getCertificate() {return certificate; }
@@ -26,8 +32,3 @@ double& MotionPicture::getRating() { return rating; }
 string& MotionPicture::getDescription() { return description; }
 vector<string>& MotionPicture::getCast() { return cast; }
 int& MotionPicture::getVotes() { return votes; }
-
-bool MotionPicture::operator<(const MotionPicture & movie) const {
-    //this is just arbitrary to get the map to work
-  return movie.getIsMovie();
-}
