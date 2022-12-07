@@ -26,3 +26,7 @@ TEST_CASE("MotionPicture Class Works", "[case-1]") {
     REQUIRE(mp1.getCast() == cast);
     REQUIRE(mp1.getVotes() == 10000);
 }
+TEST_CASE("Recommendation Constructor Works", "[case-2]") {
+    string file = "test/test.csv";
+    Recommendation rec(file);
+}
