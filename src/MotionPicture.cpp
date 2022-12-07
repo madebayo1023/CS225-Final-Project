@@ -19,6 +19,7 @@ MotionPicture::MotionPicture(string title, bool is_movie, int start_year, int en
                     this->votes = votes;
                  }
 bool MotionPicture::operator<(const MotionPicture& rhs) const {
+    (void) rhs;
     return true; // we are not concerned with maintaining an ordered map
 }
 std::string& MotionPicture::getTitle() { return title; }
