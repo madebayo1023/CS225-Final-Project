@@ -164,6 +164,55 @@ int& Recommendation::operator[](MotionPicture mp) {
   return mp_to_idx[&mp];
 }
 
+std::string Recommendation::DijkstraAlgo(std::string MovieName, unsigned recommendations) {
+  int index = -1;
+  if (int(recommendations) < 1) {
+    return "Please Enter a Higher Number of Recommendations\n";
+  }
+  std::string ret = "Movie Recommendations\n";
+  for (auto i : idx_to_mp) {
+    if (i.second->getTitle() == MovieName) {
+      index = i.first;
+    }
+  }
+  if (index == -1) {
+    return "Movie Not Found\n";
+  }
+  auto copymatrix = adjacency_matrix;
+  double highestval = -1;
+  int highestindex = -1;
+  for (unsigned g = 0; g < adjacency_matrix[index].size(); g++) {
+    if (adjacency_matrix[index][g] > highestval) {
+      highestval = adjacency_matrix[index][g];
+      highestindex = g;
+      copymatrix[index][g] = -1;
+    }
+  }
+  if (highestindex > -1) {
+    ret = ret + idx_to_mp[highestindex]->getTitle() + ": " + std::to_string(highestval) + "\n";
+  }
+  if (recommendations == 1) {
+    return ret;
+  }
+  for (unsigned k = 0; k < recommendations - 1; k++) {
+    if (k < mp_to_idx.size() - 1) {
+      highestval = -1;
+      highestindex = -1;
+      for (unsigned l = 0; l < copymatrix[index].size(); l++) {
+        if (copymatrix[index][l] > highestval) {
+          highestval = copymatrix[index][l];
+          highestindex = l;
+          copymatrix[index][l] = -1;
+        }
+      }
+      if (highestindex > -1) {
+        ret = ret + idx_to_mp[highestindex]->getTitle() + ": " + std::to_string(highestval) + "\n";
+      }
+    }
+  }
+  return ret;
+}
+
 void Recommendation::setSimilarity() {
   for (int i = 0; i < size_; i++) {
     for (int j = 0; j < size_; j++) {

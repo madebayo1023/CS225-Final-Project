@@ -17,7 +17,10 @@ int main() {
 
     // cout << mp1.getTitle() << endl;
 
+
     string file = "data/n_movies.csv";
     Recommendation rec(file);
+
+    std::cout << rec.DijkstraAlgo("Better Call Saul", 5) << std::endl;;
     return 0;
 }

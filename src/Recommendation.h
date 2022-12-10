@@ -15,6 +15,8 @@ class Recommendation {
         *
         * @param file the dataset
         */
+
+        std::string DijkstraAlgo(std::string MovieName, unsigned recommendations);
         Recommendation(string file);
         ~Recommendation();
     private:
