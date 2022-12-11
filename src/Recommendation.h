@@ -17,6 +17,7 @@ class Recommendation {
         */
 
         std::string DijkstraAlgo(std::string MovieName, unsigned recommendations);
+        std::string BFS(std::string MovieName, unsigned recommendations);
         Recommendation(string file);
         ~Recommendation();
     private:

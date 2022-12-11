@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <utility>
+#include <queue>
 
 using namespace std;
 Recommendation::Recommendation(string file) {
@@ -202,11 +203,57 @@ std::string Recommendation::DijkstraAlgo(std::string MovieName, unsigned recomme
         if (copymatrix[index][l] > highestval) {
           highestval = copymatrix[index][l];
           highestindex = l;
-          copymatrix[index][l] = -1;
         }
       }
       if (highestindex > -1) {
+        copymatrix[index][highestindex] = -1;
         ret = ret + idx_to_mp[highestindex]->getTitle() + ": " + std::to_string(highestval) + "\n";
+      }
+    }
+  }
+  return ret;
+}
+
+std::string Recommendation::BFS(std::string MovieName, unsigned recommendations) {
+  std::queue<std::pair<int, double>> queue;
+  int index = -1;
+  if (int(recommendations) < 1) {
+    return "Please Enter a Higher Number of Recommendations\n";
+  }
+  std::string ret = "Movie Recommendations\n";
+  for (auto i : idx_to_mp) {
+    if (i.second->getTitle() == MovieName) {
+      index = i.first;
+    }
+  }
+  if (index == -1) {
+    return "Movie Not Found\n";
+  }
+  auto copymatrix = adjacency_matrix;
+  for (auto i : idx_to_mp) {
+    if (i.second->getTitle() == MovieName) {
+      index = i.first;
+    }
+  }
+
+  for (unsigned k = 0; k < recommendations; k++) {
+    if (k < mp_to_idx.size() - 1) {
+      for (unsigned r = 0; r < copymatrix[index].size(); r++) {
+        queue.push({r, copymatrix[index][r]});
+      }
+      std::pair<int, double> highest = {-1, -1};
+      while(!queue.empty()) {
+        std::pair<int, double> temp = queue.front();
+        queue.pop();
+        if (temp.second > highest.second) {
+          highest = temp;
+        }
+      }
+      if (highest.first > -1) {
+        copymatrix[index][highest.first] = -1;
+      }
+      if (highest.second > -1) {
+        ret = ret + idx_to_mp[highest.first]->getTitle() + ": " + std::to_string(highest.second) + "\n";
       }
     }
   }
