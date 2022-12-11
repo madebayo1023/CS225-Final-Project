@@ -400,7 +400,8 @@ Recommendation::~Recommendation()
   clear();
 }
 
-int Recommendation::betweennessCentrality(std::string lookingFor, unsigned recommendations)
+// finds the betweenness centrality for a certain node/movie
+int Recommendation::betweennessCentrality(MotionPicture *lookingFor)
 {
   // find the total number of shortest paths between two movies
   // find the total number of shortest paths between two movies that include one other movie in the path
@@ -408,36 +409,41 @@ int Recommendation::betweennessCentrality(std::string lookingFor, unsigned recom
   // list out all the paths you can form by going through all the movies
   // compare two movies and ensure they are both neighbors
   // if they are (which they should be since everything is connected) then see if its list of existing neighbors contains lookingFor (which is the node that you would hope to be on your path )
-  int betweenness_centrality = 0;
-  vector<double> res;
+  // it is guranteed that every node is connected to every other node in the graph (can assume a dividend of 1 for each movie you go through)
+  vector<double> betweenness_central_scores;
   for (size_t i = 0; i < adjacency_matrix.size(); i++)
   {
     for (size_t j = 0; j < adjacency_matrix[i].size(); j++)
     {
-      size_t k = j + 1;
+      // get the two current movies on which we are operating
       MotionPicture *movie1 = idx_to_mp(i);
       MotionPicture *movie2 = idx_to_mp(j);
+      // get the list of neighbors for those two movies
       vector<double> neighbors1 = adjacency_matrix[i];
       vector<double> neighbors2 = adjacency_matrix[j];
-      // the part that I am a little confused on:
-      // how do I get the double score for the passed in movie??
-      double lookingFor_score = ;
+      // check if both neighbors' lists include the movie we are looking for
+      // in order to do this we need to check if the score for that movie is in the neighbors list for both movie1 and movie2
+      int lookingFor_idx = mp_to_idx.find(lookingFor);
+      double lookingFor_score = adjacency_matrix(adjacency_matrix[i].size() * i + lookingFor_idx);
       if (std::find(lookingFor_score, neighbors1.begin(), neighbors1.end()) && std::find(lookingFor_score, neighbors2.begin(), neighbors2.end()))
       {
-        res.push_back(1);
+        double score = 1 / 1;
+        betweenness_central_scores.push_back(score);
+      }
+      else
+      {
+        double score = 1 / 0;
+        betweenness_central_scores.push_back(score);
       }
     }
-    for (auto &ele : res)
+    int bt_score = 0;
+    for (double &score : betweenness_central_scores)
     {
-      betweenness_centrality++;
+      if (score == 1)
+      {
+        bt_score++;
+      }
     }
-    return betweenness_centrality;
-    // or you can do return res.size();
+    return bt_score;
   }
-  // OLD LOGIC
-  /* adj matrix stores scores to every movie
-  every movie relates to eveyr ohter movie
-  traverse adj matrix, get the movies at i and j
-  verify the other movie exists in the adj matrix
-  sum score */
 }
