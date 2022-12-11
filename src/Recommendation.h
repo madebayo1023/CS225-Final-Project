@@ -17,7 +17,7 @@ class Recommendation {
         */
 
         std::string DijkstraAlgo(std::string MovieName, unsigned recommendations);
-        int Recommendation::betweennessCentrality(MotionPicture *lookingFor);
+        int betweennessCentrality(MotionPicture *lookingFor);
         Recommendation(string file);
         ~Recommendation();
     private:
