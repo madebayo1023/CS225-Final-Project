@@ -21,7 +21,9 @@ Prerequisites/Installation:
 
 To run the code:
 
-  Define your input data by passing the correct file path to your dataset, preferably a CSV file, into the Recommendation constructor. The current CSV file is delimited by commas with the following attributes: title, year, certificate, duration, genre, rating, description, stars, and votes. Call any method you would like on the object instantiated in step 4 and observe its output in the terminal after using "make exec" to compile the program. To run the executable, do "./bin/exec."
+1. Define your input data by passing the correct file path to your dataset, preferably a CSV file, into the Recommendation constructor. The current CSV file is delimited by commas with the following attributes: title, year, certificate, duration, genre, rating, description, stars, and votes. 
+2. Call any method you would like on the object instantiated in step 4 and observe its output in the terminal after using "make exec" to compile the program. 
+3. To run the executable, do "./bin/exec."
 
 To create and run your own, personalized tests:
 
