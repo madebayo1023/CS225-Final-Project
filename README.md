@@ -29,7 +29,7 @@ To run the code:
 To create and run your own, personalized tests:
 
 1. Run the command "make test". 
-2. Run any specific test case using the command "./test 'TestName'."
+2. Run any specific test case using the command "./bin/tests 'TestName'" or "./bin/tests" to run all tests.
 3. Ensure the output matches the required test case and ensure the test case passes. 
 
 Acknowledgements 
