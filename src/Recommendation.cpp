@@ -423,7 +423,7 @@ int Recommendation::betweennessCentrality(MotionPicture *lookingFor)
       vector<double> neighbors2 = adjacency_matrix[j];
       // check if both neighbors' lists include the movie we are looking for
       // in order to do this we need to check if the score for that movie is in the neighbors list for both movie1 and movie2
-      int lookingFor_idx = mp_to_idx.find(lookingFor);
+      int lookingFor_idx = mp_to_idx[lookingFor];
       double lookingFor_score = adjacency_matrix(adjacency_matrix[i].size() * i + lookingFor_idx);
       if (std::find(lookingFor_score, neighbors1.begin(), neighbors1.end()) && std::find(lookingFor_score, neighbors2.begin(), neighbors2.end()))
       {
@@ -432,7 +432,7 @@ int Recommendation::betweennessCentrality(MotionPicture *lookingFor)
       }
       else
       {
-        double score = 1 / 0;
+        double score = 0;
         betweenness_central_scores.push_back(score);
       }
     }
