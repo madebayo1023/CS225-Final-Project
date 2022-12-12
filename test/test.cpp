@@ -31,6 +31,10 @@ TEST_CASE("Recommendation Constructor Works", "[case-2]")
 {
     string file = "test/test.csv";
     Recommendation rec(file);
+    REQUIRE(rec.getSize() == 4);
+    REQUIRE(rec.getSimilarity(2, 3) == 35); // Devil in Ohio & Cyberpunk: Edgerunner
+    REQUIRE(rec.getSimilarity(0, 3) == 21); // The Crown & Cyberpunk: Edgerunner
+    REQUIRE(rec.getSimilarity(0, 0) == -1); // The Crown & The Crown
 }
 
 TEST_CASE("Recommendation Dijkstra", "[case-3]")
@@ -47,15 +51,12 @@ TEST_CASE("Recommendation Dijkstra", "[case-3]")
 
 TEST_CASE("Betweenness Centrality", "[case-4]")
 {
-    // can use the same file for btwn central test
-    string file = "test/DijkstraTests.csv";
+    string file = "test/bt.csv";
     Recommendation rec(file);
-    std::cout << rec.betweennessCentrality("Better Call Saul") << std::endl;
-    REQUIRE(rec.betweennessCentrality("Better Call Saul") == 4);
-    std::cout << rec.betweennessCentrality("The Crown") << std::endl;
-    REQUIRE(rec.betweennessCentrality("The Crown") == 2);
-    std::cout << rec.betweennessCentrality("Peaky Blinders") << std::endl;
-    REQUIRE(rec.betweennessCentrality("Peaky Blinders") == 3);
+    REQUIRE(rec.betweennessCentrality(2) == 7); // 2 = Peaky Blinders
+    REQUIRE(rec.betweennessCentrality(5) == 7); // 5 = Black Mirror: Bandersnatch
+    REQUIRE(rec.betweennessCentrality(8) == 9); // 8 = Glass Onion: A Knives Out Mystery
+    REQUIRE(rec.betweennessCentrality(10) == 9); // 10 = Sons of the Caliphate
 }
 
 TEST_CASE("Recommendation BFS", "[case-5]") {
