@@ -17,6 +17,7 @@ GitHub Organization:
   The presentation video is linked here and can be found on MediaSpace. 
 
 Prerequisites/Installation:
+  Make sure to have Visual Studio Code installed.
 
   Create your own directory ("bin") using the command "mkdir bin." This is where your executable will lie once your program has been linked. 
 
