@@ -22,5 +22,7 @@ int main() {
     Recommendation rec(file);
 
     std::cout << rec.DijkstraAlgo("Better Call Saul", 5) << std::endl;;
+    std::cout << " " << std::endl;
+    std::cout << rec.BFS("The Crown", 2) << std::endl;
     return 0;
 }

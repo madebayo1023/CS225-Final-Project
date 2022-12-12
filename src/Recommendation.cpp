@@ -2,10 +2,14 @@
 #include <iostream>
 #include <fstream>
 #include <utility>
+#include <queue>
 
 using namespace std;
-Recommendation::Recommendation(string file)
-{
+/**
+* Constructs Recommendation class
+* * @param file dataset of Netflix MotionPictures
+*/
+Recommendation::Recommendation(string file) {
   ifstream dataset;
   string line;
   dataset.open(file);
@@ -55,8 +59,13 @@ Recommendation::Recommendation(string file)
   // }
 }
 
-std::vector<std::string> Recommendation::Split(const std::string &str, char delimiter)
-{
+/**
+* Parses the dataset through delimiting by a character
+* @param str string to parse
+* * @param delimiter1 char to delimit by
+* @return vector of each individual element for the MotionPicture object
+*/
+std::vector<std::string> Recommendation::Split(const std::string& str, char delimiter) {
   size_t last = 0;
   std::vector<std::string> substrs;
   int pos = 0;
@@ -123,8 +132,11 @@ std::vector<std::string> Recommendation::Split(const std::string &str, char deli
   return substrs;
 }
 
-void Recommendation::reverse(string &str)
-{
+/**
+* Reverses a string 
+* @param str the string to reverse
+*/
+void Recommendation::reverse(string& str) {
   int len = str.length();
   int n = len - 1;
   int i = 0;
@@ -136,8 +148,12 @@ void Recommendation::reverse(string &str)
   }
 }
 
-std::vector<std::string> Recommendation::parseGenres(const std::string &str)
-{
+/**
+* Parses genres
+* * @param str string of genres
+* @return vector of genres
+*/
+std::vector<std::string> Recommendation::parseGenres(const std::string& str) {
   size_t last = 0;
   std::vector<std::string> substrs;
   for (size_t i = 0; i != str.length(); ++i)
@@ -158,8 +174,12 @@ std::vector<std::string> Recommendation::parseGenres(const std::string &str)
   return substrs;
 }
 
-std::vector<std::string> Recommendation::parseCast(const std::string &s)
-{
+/**
+* Parses cast
+* * @param s string of cast members
+* @return vector of cast members
+*/
+std::vector<std::string> Recommendation::parseCast(const std::string& s) {
   size_t last = 0;
   std::vector<std::string> substrs;
   string str = s.substr(1, s.length() - 2);
@@ -182,8 +202,12 @@ std::vector<std::string> Recommendation::parseCast(const std::string &s)
   return substrs;
 }
 
-std::vector<std::string> Recommendation::parseYears(const std::string &s)
-{
+/**
+* Parses years
+* * @param s string representing the years
+* @return vector of start and end years
+*/
+std::vector<std::string> Recommendation::parseYears(const std::string& s) {
   std::vector<std::string> substrs;
   string year1 = s.substr(0, 4);
   substrs.push_back(year1);
@@ -195,18 +219,31 @@ std::vector<std::string> Recommendation::parseYears(const std::string &s)
   return substrs;
 }
 
-MotionPicture *Recommendation::operator[](int i)
-{
+/**
+* Overloaded subscript operator
+* * @param i index in idx_to_mp map
+* @return corresponding MotionPicture pointer object at that index
+*/
+MotionPicture* Recommendation::operator[](int i) {
   return idx_to_mp[i];
 }
 
-int &Recommendation::operator[](MotionPicture mp)
-{
+/**
+* Overloaded subscript operator
+* * @param mp MotionPicture in mp_to_idx map
+* @return corresponding index at that MotionPicture pointer object value
+*/
+int& Recommendation::operator[](MotionPicture mp) {
   return mp_to_idx[&mp];
 }
 
-std::string Recommendation::DijkstraAlgo(std::string MovieName, unsigned recommendations)
-{
+/**
+* Traverses adjacency matrix of Netflix MotionPictures
+* @param MovieName title of MotionPicture object
+* @param recommendations number of MotionPictures recommendations the user would like
+* @return string of MotionPictures most similar to the one inputted by the user
+*/
+std::string Recommendation::DijkstraAlgo(std::string MovieName, unsigned recommendations) {
   int index = -1;
   if (int(recommendations) < 1)
   {
@@ -256,11 +293,11 @@ std::string Recommendation::DijkstraAlgo(std::string MovieName, unsigned recomme
         {
           highestval = copymatrix[index][l];
           highestindex = l;
-          copymatrix[index][l] = -1;
         }
       }
-      if (highestindex > -1)
-      {
+
+      if (highestindex > -1) {
+        copymatrix[index][highestindex] = -1;
         ret = ret + idx_to_mp[highestindex]->getTitle() + ": " + std::to_string(highestval) + "\n";
       }
     }
@@ -268,14 +305,65 @@ std::string Recommendation::DijkstraAlgo(std::string MovieName, unsigned recomme
   return ret;
 }
 
-void Recommendation::setSimilarity()
-{
-  for (int i = 0; i < size_; i++)
-  {
-    for (int j = 0; j < size_; j++)
-    {
-      if (i == j)
-      {
+/**
+* Traverses adjacency matrix of Netflix MotionPictures
+* @param MovieName title of MotionPicture object
+* @param recommendations number of MotionPictures recommendations the user would like
+* @return string of MotionPictures most similar to the one inputted by the user
+*/
+std::string Recommendation::BFS(std::string MovieName, unsigned recommendations) {
+  std::queue<std::pair<int, double>> queue;
+  int index = -1;
+  if (int(recommendations) < 1) {
+    return "Please Enter a Higher Number of Recommendations\n";
+  }
+  std::string ret = "Movie Recommendations\n";
+  for (auto i : idx_to_mp) {
+    if (i.second->getTitle() == MovieName) {
+      index = i.first;
+    }
+  }
+  if (index == -1) {
+    return "Movie Not Found\n";
+  }
+  auto copymatrix = adjacency_matrix;
+  for (auto i : idx_to_mp) {
+    if (i.second->getTitle() == MovieName) {
+      index = i.first;
+    }
+  }
+
+  for (unsigned k = 0; k < recommendations; k++) {
+    if (k < mp_to_idx.size() - 1) {
+      for (unsigned r = 0; r < copymatrix[index].size(); r++) {
+        queue.push({r, copymatrix[index][r]});
+      }
+      std::pair<int, double> highest = {-1, -1};
+      while(!queue.empty()) {
+        std::pair<int, double> temp = queue.front();
+        queue.pop();
+        if (temp.second > highest.second) {
+          highest = temp;
+        }
+      }
+      if (highest.first > -1) {
+        copymatrix[index][highest.first] = -1;
+      }
+      if (highest.second > -1) {
+        ret = ret + idx_to_mp[highest.first]->getTitle() + ": " + std::to_string(highest.second) + "\n";
+      }
+    }
+  }
+  return ret;
+}
+
+/**
+* Assigns weight to each edge in adjacency matrix, which represents the similarity between two MotionPicture objects
+*/
+void Recommendation::setSimilarity() {
+  for (int i = 0; i < size_; i++) {
+    for (int j = 0; j < size_; j++) {
+      if (i == j) {
         adjacency_matrix[i][j] = -1;
         break;
       }
@@ -387,16 +475,19 @@ void Recommendation::setSimilarity()
   }
 }
 
-void Recommendation::clear()
-{
-  for (auto &p1 : idx_to_mp)
-  {
+/**
+* Deallocates all dynamic memory
+*/
+void Recommendation::clear() {
+  for (auto& p1 : idx_to_mp) {
     delete p1.second;
   }
 }
 
-Recommendation::~Recommendation()
-{
+/**
+* Destructor, Deallocates all dynamic memory
+*/
+Recommendation::~Recommendation() {
   clear();
 }
 

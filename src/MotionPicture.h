@@ -7,6 +7,10 @@ using namespace std;
 
 class MotionPicture {
     public:
+        /*
+        * Default constructor
+        */
+        MotionPicture();
         /**
         * Constructor that creates a MotionPicture object 
         *
@@ -22,8 +26,6 @@ class MotionPicture {
         * @param cast of The MotionPicture object
         * @param votes of The MotionPicture object
         */
-        MotionPicture();
-        MotionPicture(string title);
         MotionPicture(string title, bool is_movie, int start_year, int end_year, string certificate, int duration, vector<string> genre,
                         double rating, string description, vector<string> cast, int votes);
         /**
@@ -32,6 +34,11 @@ class MotionPicture {
         * @return title of The MotionPicture object
         */
         std::string& getTitle();
+        /**
+        * Overloaded less than operator 
+        *
+        * @return boolean value if this is less than righthand object
+        */
         bool operator<(const MotionPicture& rhs) const;
         /**
         * Returns true if MotionPicture is a movie, false otherwise
