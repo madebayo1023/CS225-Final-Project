@@ -14,6 +14,9 @@ class Recommendation {
         * Constructs Recommendation class
         * * @param file dataset of Netflix MotionPictures
         */
+
+        std::string DijkstraAlgo(std::string MovieName, unsigned recommendations);
+        int betweennessCentrality(MotionPicture *lookingFor);
         Recommendation(string file);
 
         /**

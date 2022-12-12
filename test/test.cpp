@@ -7,7 +7,8 @@
 #include "../src/MotionPicture.h"
 #include "../src/Recommendation.h"
 
-TEST_CASE("MotionPicture Class Works", "[case-1]") {
+TEST_CASE("MotionPicture Class Works", "[case-1]")
+{
     vector<string> genre = {"Action"};
     string description = "Cat takes dog on a walk";
     vector<string> cast = {"Danny DeVito"};
@@ -25,14 +26,15 @@ TEST_CASE("MotionPicture Class Works", "[case-1]") {
     REQUIRE(mp1.getDescription() == description);
     REQUIRE(mp1.getCast() == cast);
     REQUIRE(mp1.getVotes() == 10000);
-
 }
-TEST_CASE("Recommendation Constructor Works", "[case-2]") {
+TEST_CASE("Recommendation Constructor Works", "[case-2]")
+{
     string file = "test/test.csv";
     Recommendation rec(file);
 }
 
-TEST_CASE("Recommendation Dijkstra", "[case-3]") {
+TEST_CASE("Recommendation Dijkstra", "[case-3]")
+{
     string file = "test/DijkstraTests.csv";
     Recommendation rec(file);
     REQUIRE(rec.DijkstraAlgo("Better Call Saul", 1) == "Movie Recommendations\nPeaky Blinders: 132.000000\n");
@@ -43,7 +45,20 @@ TEST_CASE("Recommendation Dijkstra", "[case-3]") {
     REQUIRE(rec.DijkstraAlgo("Better Call Saul", 4) == "Movie Recommendations\nPeaky Blinders: 132.000000\nMoney Heist: 132.000000\nBlack Mirror: Bandersnatch: 13.000000\n");
 }
 
-TEST_CASE("Recommendation BFS", "[case-4]") {
+TEST_CASE("Betweenness Centrality", "[case-4]")
+{
+    // can use the same file for btwn central test
+    string file = "test/DijkstraTests.csv";
+    Recommendation rec(file);
+    std::cout << rec.betweennessCentrality("Better Call Saul") << std::endl;
+    REQUIRE(rec.betweennessCentrality("Better Call Saul") == 4);
+    std::cout << rec.betweennessCentrality("The Crown") << std::endl;
+    REQUIRE(rec.betweennessCentrality("The Crown") == 2);
+    std::cout << rec.betweennessCentrality("Peaky Blinders") << std::endl;
+    REQUIRE(rec.betweennessCentrality("Peaky Blinders") == 3);
+}
+
+TEST_CASE("Recommendation BFS", "[case-5]") {
     string file = "test/BFSTests.csv";
     Recommendation rec(file);
     REQUIRE(rec.BFS("The Crown", 1) == "Movie Recommendations\nBetter Call Saul: 15.000000\n");
