@@ -14,15 +14,24 @@ class Recommendation {
         * Constructs Recommendation class
         * * @param file dataset of Netflix MotionPictures
         */
-
-        std::string DijkstraAlgo(std::string MovieName, unsigned recommendations);
-        int betweennessCentrality(MotionPicture *lookingFor);
         Recommendation(string file);
 
         /**
         * Destructor, Deallocates all dynamic memory
         */
         ~Recommendation();
+
+        /**
+        * Copy constructor for Recommendation class
+        * @param rhs object to be copied
+        */
+        Recommendation(const Recommendation &rhs) = default;
+
+        /**
+        * Operator equals assignment for Recommendation class
+        * @param rhs object to be copied
+        */
+        Recommendation& operator=(const Recommendation &rhs) = default;
 
         /**
         * Traverses adjacency matrix of Netflix MotionPictures
@@ -39,6 +48,27 @@ class Recommendation {
         * @return string of MotionPictures most similar to the one inputted by the user
         */
         std::string BFS(std::string MovieName, unsigned recommendations);
+
+        /**
+        * Traverses adjacency matrix of Netflix MotionPictures
+        * @param lookingFor title of target MotionPicture object
+        * @return int representing
+        */
+        int betweennessCentrality(int lookingFor);
+
+        /**
+        * Returns the edge weight between two MotionPictures
+        * @param idx1 index of the first MotionPicture
+        * * @param idx2 index of the second MotionPicture
+        * @return value of the edge between the two MotionPicture objects
+        */
+        double getSimilarity(int idx1, int idx2);
+
+        /**
+        * Returns the number of MotionPictures in dataset
+        * @return number of MotionPicture objects
+        */
+        int getSize();
     private:
         map<MotionPicture*, int> mp_to_idx;
         map<int, MotionPicture*> idx_to_mp;
