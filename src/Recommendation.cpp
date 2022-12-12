@@ -5,6 +5,11 @@
 #include <queue>
 
 using namespace std;
+
+/**
+* Constructs Recommendation class
+* * @param file dataset of Netflix MotionPictures
+*/
 Recommendation::Recommendation(string file) {
   ifstream dataset;
   string line;
@@ -49,6 +54,12 @@ Recommendation::Recommendation(string file) {
   // }
 }
 
+/**
+* Parses the dataset through delimiting by a character
+* @param str string to parse
+* * @param delimiter1 char to delimit by
+* @return vector of each individual element for the MotionPicture object
+*/
 std::vector<std::string> Recommendation::Split(const std::string& str, char delimiter) {
   size_t last = 0;
   std::vector<std::string> substrs;
@@ -100,6 +111,10 @@ std::vector<std::string> Recommendation::Split(const std::string& str, char deli
   return substrs;
 }
 
+/**
+* Reverses a string 
+* @param str the string to reverse
+*/
 void Recommendation::reverse(string& str) {
   int len = str.length();
     int n = len-1;
@@ -111,6 +126,11 @@ void Recommendation::reverse(string& str) {
   }
 }
 
+/**
+* Parses genres
+* * @param str string of genres
+* @return vector of genres
+*/
 std::vector<std::string> Recommendation::parseGenres(const std::string& str) {
   size_t last = 0;
   std::vector<std::string> substrs;
@@ -128,6 +148,11 @@ std::vector<std::string> Recommendation::parseGenres(const std::string& str) {
   return substrs;
 }
 
+/**
+* Parses cast
+* * @param s string of cast members
+* @return vector of cast members
+*/
 std::vector<std::string> Recommendation::parseCast(const std::string& s) {
   size_t last = 0;
   std::vector<std::string> substrs;
@@ -146,6 +171,11 @@ std::vector<std::string> Recommendation::parseCast(const std::string& s) {
   return substrs;
 }
 
+/**
+* Parses years
+* * @param s string representing the years
+* @return vector of start and end years
+*/
 std::vector<std::string> Recommendation::parseYears(const std::string& s) {
   std::vector<std::string> substrs;
   string year1 = s.substr(0, 4);
@@ -157,14 +187,30 @@ std::vector<std::string> Recommendation::parseYears(const std::string& s) {
   return substrs;
 }
 
+/**
+* Overloaded subscript operator
+* * @param i index in idx_to_mp map
+* @return corresponding MotionPicture pointer object at that index
+*/
 MotionPicture* Recommendation::operator[](int i) {
   return idx_to_mp[i];
 }
 
+/**
+* Overloaded subscript operator
+* * @param mp MotionPicture in mp_to_idx map
+* @return corresponding index at that MotionPicture pointer object value
+*/
 int& Recommendation::operator[](MotionPicture mp) {
   return mp_to_idx[&mp];
 }
 
+/**
+* Traverses adjacency matrix of Netflix MotionPictures
+* @param MovieName title of MotionPicture object
+* @param recommendations number of MotionPictures recommendations the user would like
+* @return string of MotionPictures most similar to the one inputted by the user
+*/
 std::string Recommendation::DijkstraAlgo(std::string MovieName, unsigned recommendations) {
   int index = -1;
   if (int(recommendations) < 1) {
@@ -214,6 +260,12 @@ std::string Recommendation::DijkstraAlgo(std::string MovieName, unsigned recomme
   return ret;
 }
 
+/**
+* Traverses adjacency matrix of Netflix MotionPictures
+* @param MovieName title of MotionPicture object
+* @param recommendations number of MotionPictures recommendations the user would like
+* @return string of MotionPictures most similar to the one inputted by the user
+*/
 std::string Recommendation::BFS(std::string MovieName, unsigned recommendations) {
   std::queue<std::pair<int, double>> queue;
   int index = -1;
@@ -260,6 +312,9 @@ std::string Recommendation::BFS(std::string MovieName, unsigned recommendations)
   return ret;
 }
 
+/**
+* Assigns weight to each edge in adjacency matrix, which represents the similarity between two MotionPicture objects
+*/
 void Recommendation::setSimilarity() {
   for (int i = 0; i < size_; i++) {
     for (int j = 0; j < size_; j++) {
@@ -352,12 +407,18 @@ void Recommendation::setSimilarity() {
   }
 }
 
+/**
+* Deallocates all dynamic memory
+*/
 void Recommendation::clear() {
   for (auto& p1 : idx_to_mp) {
     delete p1.second;
   }
 }
 
+/**
+* Destructor, Deallocates all dynamic memory
+*/
 Recommendation::~Recommendation() {
   clear();
 }
