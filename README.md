@@ -2,7 +2,7 @@
 
 About the Project:
 
-Our leading question for this project was the following: given a dataset of Netflix movies, what movies are most similar to a movie provided by the user in regards to characteristics provided by the user? For example, one query the user can make is what movie is most similar to Black Panther in regards to level of popularity, which is numerically measured by how many people watched or the amount of the revenue generated. The output is a list of top x movies (either 5 or 10 or however many there are based on the size output generated) that are most similar to what the user’s query is. 
+Our leading question for this project was the following: given a dataset of Netflix movies/shows/motion pictures, what movies are most similar to a movie provided by the user in regards to characteristics provided by the user? For example, one query the user can make is what movie is most similar to Black Panther in regards to level of popularity, which is numerically measured by how many people watched or the amount of the revenue generated. The output is a list of top x movies that are most similar to what the user’s query is. 
   
 Built With 
 
