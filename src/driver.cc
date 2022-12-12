@@ -15,14 +15,25 @@ int main() {
 
     MotionPicture mp1("Test", true, 2022, 2023, "PG", 60, genre, 10, description, cast, 10000);
 
-    // cout << mp1.getTitle() << endl;
-
 
     string file = "data/n_movies.csv";
     Recommendation rec(file);
 
-    std::cout << rec.DijkstraAlgo("Better Call Saul", 5) << std::endl;;
-    std::cout << " " << std::endl;
+    std::cout << "Dijkstra's Algorithm\n" << std::endl;
+
+    std::cout << rec.DijkstraAlgo("Better Call Saul", 5) << std::endl;
+
+
+    std::cout << "------" << std::endl;
+    std::cout << "BFS Algorithm\n" << std::endl;
+
+
     std::cout << rec.BFS("The Crown", 2) << std::endl;
+
+    
+    std::cout << "------" << std::endl;
+    std::cout << "Betweenness Centrality Algorithm\n" << std::endl;
+    std::cout << "Betweenness centrality score for Peaky Blinders" << " " <<  rec.betweennessCentrality(2) << " " << std::endl;
+    std::cout << "Betweenness centrality score for Black Mirror: Bandersnatch" << " " <<  rec.betweennessCentrality(5) << " " << std::endl;
     return 0;
 }
