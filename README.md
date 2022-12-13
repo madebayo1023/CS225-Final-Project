@@ -14,7 +14,7 @@ Our leading question for this project was the following: given a dataset of Netf
   The tests can be found in "test.cpp" in the folder labeled "test."
   The data can be found in the folder labeled "data."
   The written report can be found on our repo. Look for the file titled "results.md."
-  The presentation video is linked here and can be found on MediaSpace. 
+  The presentation video is here: https://mediaspace.illinois.edu/edit/1_i4dnjnjh 
 
 ## Prerequisites/Installation:
   Make sure to have Visual Studio Code installed.
